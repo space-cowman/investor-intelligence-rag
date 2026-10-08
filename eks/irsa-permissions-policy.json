@@ -1,0 +1,32 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "BedrockInvoke",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:InvokeModel",
+        "bedrock:InvokeModelWithResponseStream"
+      ],
+      "Resource": [
+        "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0",
+        "arn:aws:bedrock:us-east-1:022444447221:inference-profile/us.amazon.nova-2-lite-v1:0",
+        "arn:aws:bedrock:us-east-1::foundation-model/amazon.nova-2-lite-v1:0",
+        "arn:aws:bedrock:us-east-2::foundation-model/amazon.nova-2-lite-v1:0",
+        "arn:aws:bedrock:us-west-2::foundation-model/amazon.nova-2-lite-v1:0"
+      ]
+    },
+    {
+      "Sid": "OpenSearchHttp",
+      "Effect": "Allow",
+      "Action": "es:ESHttp*",
+      "Resource": "arn:aws:es:us-east-1:022444447221:domain/investor-intel/*"
+    },
+    {
+      "Sid": "AuroraIamAuth",
+      "Effect": "Allow",
+      "Action": "rds-db:connect",
+      "Resource": "arn:aws:rds-db:us-east-1:022444447221:dbuser:cluster-OCFJG355V3R2MQKOGVOWAWZP2M/postgres"
+    }
+  ]
+}

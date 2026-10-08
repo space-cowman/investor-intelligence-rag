@@ -1,0 +1,17 @@
+# Replaces .env — same mechanism as docker run --env-file, injected automatically on every pod start.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: investor-intelligence-config
+  namespace: default
+data:
+  AWS_REGION: "us-east-1"
+  BEDROCK_EMBEDDING_MODEL_ID: "amazon.titan-embed-text-v2:0"
+  BEDROCK_CHAT_MODEL_ID: "us.amazon.nova-2-lite-v1:0"
+  OPENSEARCH_ENDPOINT: "https://search-investor-intel-lfc2a6f3hiolgfuvkjn2l2yhai.us-east-1.es.amazonaws.com"
+  OPENSEARCH_INDEX_NAME: "investor-docs"
+  OPENSEARCH_SERVICE: "es"
+  DB_HOST: "aurorapostgresql.cluster-cijqkiey0470.us-east-1.rds.amazonaws.com"
+  DB_PORT: "5432"
+  DB_NAME: "postgres"
+  DB_USER: "postgres"

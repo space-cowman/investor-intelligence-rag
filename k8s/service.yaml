@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: investor-intelligence
+  namespace: default
+spec:
+  type: LoadBalancer  # provisions a real AWS ELB with a public endpoint
+  selector:
+    app: investor-intelligence
+  ports:
+    - port: 80
+      targetPort: 8000

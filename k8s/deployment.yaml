@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: investor-intelligence
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: investor-intelligence
+  template:
+    metadata:
+      labels:
+        app: investor-intelligence
+    spec:
+      serviceAccountName: investor-intelligence-sa
+      containers:
+        - name: app
+          image: 022444447221.dkr.ecr.us-east-1.amazonaws.com/investor-intelligence:latest
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: investor-intelligence-config
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "450Mi"  # nodes are t3.micro (1GB) — leaves room for kubelet/kube-proxy/vpc-cni
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 75  # init_db() retries Aurora for up to ~60s on startup
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 75
+            periodSeconds: 15
+            failureThreshold: 3

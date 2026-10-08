@@ -1,0 +1,11 @@
+.venv/
+.git/
+__pycache__/
+*.pyc
+.env
+# config comes in at runtime (--env-file / ConfigMap), never baked into the image
+data/raw_pdfs/
+data/markdown/
+.vscode/
+.dockerignore
+Dockerfile

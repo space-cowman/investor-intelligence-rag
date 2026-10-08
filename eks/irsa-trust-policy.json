@@ -1,0 +1,18 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::022444447221:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/85CE4E424EF33D6D0443F28F676E07CB"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "oidc.eks.us-east-1.amazonaws.com/id/85CE4E424EF33D6D0443F28F676E07CB:sub": "system:serviceaccount:default:investor-intelligence-sa",
+          "oidc.eks.us-east-1.amazonaws.com/id/85CE4E424EF33D6D0443F28F676E07CB:aud": "sts.amazonaws.com"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: investor-intelligence
+  region: us-east-1
+  version: "1.31"
+
+iam:
+  withOIDC: true  # required for IRSA — lets pods assume IAM roles directly
+
+managedNodeGroups:
+  - name: app-nodes
+    instanceType: t3.micro  # t3.medium rejected: account is Free-Tier restricted
+    desiredCapacity: 2
+    minSize: 2
+    maxSize: 2
+    volumeSize: 20
