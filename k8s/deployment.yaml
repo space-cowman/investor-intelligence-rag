@@ -5,6 +5,18 @@ metadata:
   namespace: default
 spec:
   replicas: 1
+  # Option A (active): kill the old pod before starting the new one.
+  # Only ever needs 1 pod's worth of capacity per node (nodes cap at 4 pods
+  # each on t3.micro). Brief downtime per deploy.
+  strategy:
+    type: Recreate
+  # Option B (alternative): zero-downtime rolling deploys. Requires extra
+  # node capacity first (terraform/eks.tf, desired_size 2 -> 3).
+  # strategy:
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     maxSurge: 1
+  #     maxUnavailable: 0
   selector:
     matchLabels:
       app: investor-intelligence
@@ -28,7 +40,7 @@ spec:
               memory: "256Mi"
             limits:
               cpu: "500m"
-              memory: "450Mi"  # nodes are t3.micro (1GB) — leaves room for kubelet/kube-proxy/vpc-cni
+              memory: "450Mi"  # nodes are t3.micro (1GB); leaves room for kubelet/kube-proxy/vpc-cni
           readinessProbe:
             httpGet:
               path: /health

@@ -61,11 +61,19 @@ resource "aws_eks_node_group" "app_nodes" {
     version = "1"
   }
 
+  # Option A (active): 2 nodes, paired with Recreate in k8s/deployment.yaml.
   scaling_config {
     min_size     = 2
     max_size     = 2
     desired_size = 2
   }
+  # Option B (alternative): 3rd node for spare pod-slot headroom, enabling
+  # zero-downtime RollingUpdate in k8s/deployment.yaml instead.
+  # scaling_config {
+  #   min_size     = 3
+  #   max_size     = 3
+  #   desired_size = 3
+  # }
 
   update_config {
     max_unavailable = 1
