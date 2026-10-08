@@ -1,0 +1,68 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  AWS_ROLE_ARN: arn:aws:iam::022444447221:role/investor-intelligence-github-actions
+  ECR_REPOSITORY: 022444447221.dkr.ecr.us-east-1.amazonaws.com/investor-intelligence
+  EKS_CLUSTER: investor-intelligence
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+        id: ecr-login
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ env.ECR_REPOSITORY }}:latest
+            ${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: terraform init
+        working-directory: terraform
+        run: terraform init
+
+      - name: terraform plan
+        working-directory: terraform
+        run: terraform plan
+
+      - name: terraform apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        working-directory: terraform
+        run: terraform apply -auto-approve
+
+      - name: Update kubeconfig
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER }} --region ${{ env.AWS_REGION }}
+
+      - name: Deploy to EKS
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          kubectl apply -f k8s/
+          kubectl set image deployment/investor-intelligence app=${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+          kubectl rollout status deployment/investor-intelligence --timeout=180s
