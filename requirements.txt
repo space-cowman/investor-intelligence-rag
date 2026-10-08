@@ -1,0 +1,14 @@
+fastapi==0.136.3
+uvicorn==0.35.0
+pydantic==2.11.7
+Jinja2==3.1.6
+python-dotenv==1.1.1
+python-multipart==0.0.32
+sqlalchemy==2.0.50
+psycopg2-binary==2.9.10
+boto3==1.43.108
+langchain-aws==1.8.0
+langchain-core==1.6.7
+langchain-text-splitters==1.1.2
+opensearch-py==3.2.0
+pymupdf4llm==1.27.2.3

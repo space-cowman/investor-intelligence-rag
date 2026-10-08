@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investor Intelligence</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">II</div>
+      <div>
+        <h1>Investor Intelligence</h1>
+        <p class="muted">Annual-report KPIs and Q&amp;A, powered by AWS</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="badge">Bedrock</span>
+      <span class="badge">OpenSearch</span>
+      <span class="badge">Aurora</span>
+      <span class="health" id="health"><span class="dot"></span><span id="healthText">Checking…</span></span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="col-main">
+      <!-- Upload -->
+      <div class="card upload-card" id="dropzone">
+        <input type="file" id="fileInput" accept=".pdf" hidden>
+        <div class="upload-body">
+          <div class="upload-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+          </div>
+          <div>
+            <h2>Ingest an annual report</h2>
+            <p class="muted">
+              Drop a PDF here or <button class="link" id="browseBtn" type="button">browse</button>.
+              Name it <code>YEAR_Company.pdf</code>, e.g. <code>2024_Apple.pdf</code>.
+            </p>
+          </div>
+        </div>
+        <div class="progress" id="progress" hidden>
+          <div class="progress-label"><span id="progressText">Uploading…</span><span id="progressPct"></span></div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat"><span class="stat-value" id="statCompanies">–</span><span class="stat-label">Companies</span></div>
+        <div class="stat"><span class="stat-value" id="statReports">–</span><span class="stat-label">Reports</span></div>
+        <div class="stat"><span class="stat-value" id="statUpdated">–</span><span class="stat-label">Last update</span></div>
+      </div>
+
+      <!-- KPI table -->
+      <div class="card">
+        <div class="card-head">
+          <h2>Key financials</h2>
+          <input type="search" id="tableFilter" placeholder="Filter by company…" aria-label="Filter by company">
+        </div>
+        <div class="table-wrap">
+          <table class="kpi-table">
+            <thead>
+              <tr>
+                <th>Company</th><th>Year</th><th>Revenue</th><th>Net income</th>
+                <th>Operating income</th><th>Operating cash flow</th><th>Total assets</th><th>Total liabilities</th>
+              </tr>
+            </thead>
+            <tbody id="kpiBody"></tbody>
+          </table>
+        </div>
+        <p class="empty" id="emptyState" hidden>No reports yet. Ingest a PDF to get started.</p>
+      </div>
+
+      <!-- Selected report detail -->
+      <div class="card" id="detailCard" hidden>
+        <div class="card-head">
+          <h2 id="detailTitle"></h2>
+          <span class="muted" id="detailUpdated"></span>
+        </div>
+        <div class="qual-grid">
+          <div>
+            <h3 class="qual-title growth">Growth drivers</h3>
+            <ul class="qual-list" id="driversList"></ul>
+          </div>
+          <div>
+            <h3 class="qual-title risk">Risk factors</h3>
+            <ul class="qual-list" id="risksList"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Chat -->
+    <aside class="card chat">
+      <div class="card-head">
+        <h2>Ask the analyst</h2>
+        <select id="chatScope" aria-label="Chat scope"><option value="">All reports</option></select>
+      </div>
+      <div class="chat-log" id="chatLog" aria-live="polite">
+        <div class="msg bot"><div class="bubble">Ask about revenue, margins, risks or growth drivers. Select a report in the table to narrow the context.</div></div>
+      </div>
+      <div class="suggestions" id="suggestions">
+        <button type="button" class="chip">Summarize the top risks</button>
+        <button type="button" class="chip">What drove revenue growth?</button>
+        <button type="button" class="chip">How strong is operating cash flow?</button>
+      </div>
+      <form class="chat-form" id="chatForm">
+        <textarea id="chatInput" rows="2" placeholder="Ask a question… (Enter to send, Shift+Enter for new line)" required></textarea>
+        <button type="submit" id="sendBtn">Send</button>
+      </form>
+    </aside>
+  </main>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
