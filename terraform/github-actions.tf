@@ -47,7 +47,7 @@ resource "aws_iam_role_policy" "github_actions_permissions" {
         Action = [
           "ecr:BatchCheckLayerAvailability", "ecr:PutImage", "ecr:InitiateLayerUpload",
           "ecr:UploadLayerPart", "ecr:CompleteLayerUpload", "ecr:BatchGetImage",
-          "ecr:DescribeRepositories",
+          "ecr:DescribeRepositories", "ecr:ListTagsForResource",
         ]
         Resource = aws_ecr_repository.app.arn
       },
@@ -97,6 +97,14 @@ resource "aws_iam_role_policy" "github_actions_permissions" {
         Effect   = "Allow"
         Action   = "es:*"
         Resource = [aws_opensearch_domain.main.arn, "${aws_opensearch_domain.main.arn}/*"]
+      },
+      {
+        # global-cluster ARNs have no region segment; the provider checks
+        # this automatically on every refresh even though none is used here
+        Sid      = "RDSDescribeGlobal"
+        Effect   = "Allow"
+        Action   = "rds:DescribeGlobalClusters"
+        Resource = "arn:aws:rds::${var.account_id}:global-cluster:*"
       },
       {
         Sid      = "RDSManage"
