@@ -7,6 +7,9 @@ terraform {
     }
   }
 
+  # backend blocks can't reference variables or data sources — Terraform
+  # evaluates them before anything else runs, so this one bucket name is the
+  # single unavoidable literal in the whole stack.
   backend "s3" {
     bucket         = "investor-intelligence-tfstate-022444447221"
     key            = "investor-intelligence/terraform.tfstate"
@@ -18,4 +21,10 @@ terraform {
 
 provider "aws" {
   region = var.region
+}
+
+data "aws_caller_identity" "current" {}
+
+locals {
+  state_bucket = "investor-intelligence-tfstate-${data.aws_caller_identity.current.account_id}"
 }

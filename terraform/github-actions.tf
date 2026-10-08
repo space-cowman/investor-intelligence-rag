@@ -55,13 +55,13 @@ resource "aws_iam_role_policy" "github_actions_permissions" {
         Sid      = "TFStateS3"
         Effect   = "Allow"
         Action   = ["s3:GetObject", "s3:PutObject", "s3:ListBucket"]
-        Resource = ["arn:aws:s3:::investor-intelligence-tfstate-022444447221", "arn:aws:s3:::investor-intelligence-tfstate-022444447221/*"]
+        Resource = ["arn:aws:s3:::${local.state_bucket}", "arn:aws:s3:::${local.state_bucket}/*"]
       },
       {
         Sid      = "TFStateLock"
         Effect   = "Allow"
         Action   = ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:DeleteItem"]
-        Resource = "arn:aws:dynamodb:${var.region}:${var.account_id}:table/investor-intelligence-tfstate-lock"
+        Resource = "arn:aws:dynamodb:${var.region}:${data.aws_caller_identity.current.account_id}:table/investor-intelligence-tfstate-lock"
       },
       {
         Sid      = "EC2Manage" # ec2:* on * — AWS doesn't support resource-level scoping for most EC2 actions
@@ -75,22 +75,22 @@ resource "aws_iam_role_policy" "github_actions_permissions" {
         Action = "eks:*"
         Resource = [
           aws_eks_cluster.main.arn,
-          "arn:aws:eks:${var.region}:${var.account_id}:nodegroup/${var.cluster_name}/*/*",
-          "arn:aws:eks:${var.region}:${var.account_id}:addon/${var.cluster_name}/*/*",
-          "arn:aws:eks:${var.region}:${var.account_id}:access-entry/${var.cluster_name}/*/*/*",
+          "arn:aws:eks:${var.region}:${data.aws_caller_identity.current.account_id}:nodegroup/${var.cluster_name}/*/*",
+          "arn:aws:eks:${var.region}:${data.aws_caller_identity.current.account_id}:addon/${var.cluster_name}/*/*",
+          "arn:aws:eks:${var.region}:${data.aws_caller_identity.current.account_id}:access-entry/${var.cluster_name}/*/*/*",
         ]
       },
       {
         Sid      = "IAMManageProjectRoles"
         Effect   = "Allow"
         Action   = "iam:*"
-        Resource = ["arn:aws:iam::${var.account_id}:role/eksctl-investor-intelligence-*", "arn:aws:iam::${var.account_id}:role/investor-intelligence-*"]
+        Resource = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/eksctl-investor-intelligence-*", "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/investor-intelligence-*"]
       },
       {
         Sid      = "IAMOIDCProviders"
         Effect   = "Allow"
         Action   = "iam:*OpenIDConnectProvider*"
-        Resource = [aws_iam_openid_connect_provider.github.arn, "arn:aws:iam::${var.account_id}:oidc-provider/oidc.eks.${var.region}.amazonaws.com/*"]
+        Resource = [aws_iam_openid_connect_provider.github.arn, "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/oidc.eks.${var.region}.amazonaws.com/*"]
       },
       {
         Sid      = "OpenSearchManage"
@@ -104,7 +104,7 @@ resource "aws_iam_role_policy" "github_actions_permissions" {
         Sid      = "RDSDescribeGlobal"
         Effect   = "Allow"
         Action   = "rds:DescribeGlobalClusters"
-        Resource = "arn:aws:rds::${var.account_id}:global-cluster:*"
+        Resource = "arn:aws:rds::${data.aws_caller_identity.current.account_id}:global-cluster:*"
       },
       {
         Sid      = "RDSManage"

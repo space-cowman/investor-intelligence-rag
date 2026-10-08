@@ -19,7 +19,7 @@ resource "aws_opensearch_domain" "main" {
 
   encrypt_at_rest {
     enabled    = true
-    kms_key_id = "arn:aws:kms:us-east-1:022444447221:key/f9ea4090-40ba-48f3-8908-b6f813f82fe7"
+    kms_key_id = "arn:aws:kms:${var.region}:${data.aws_caller_identity.current.account_id}:key/f9ea4090-40ba-48f3-8908-b6f813f82fe7"
   }
 
   node_to_node_encryption {
@@ -52,9 +52,9 @@ resource "aws_opensearch_domain" "main" {
     Version = "2012-10-17"
     Statement = [{
       Effect    = "Allow"
-      Principal = { AWS = "arn:aws:iam::${var.account_id}:user/admin" }
+      Principal = { AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/admin" }
       Action    = "es:ESHttp*"
-      Resource  = "arn:aws:es:${var.region}:${var.account_id}:domain/investor-intel/*"
+      Resource  = "arn:aws:es:${var.region}:${data.aws_caller_identity.current.account_id}:domain/investor-intel/*"
     }]
   })
 }

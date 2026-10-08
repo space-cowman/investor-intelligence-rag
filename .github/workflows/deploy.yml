@@ -12,8 +12,11 @@ permissions:
 
 env:
   AWS_REGION: us-east-1
-  AWS_ROLE_ARN: arn:aws:iam::022444447221:role/investor-intelligence-github-actions
-  ECR_REPOSITORY: 022444447221.dkr.ecr.us-east-1.amazonaws.com/investor-intelligence
+  # AWS_ROLE_ARN and ECR_REPOSITORY embed the account ID, so they're set as
+  # repo variables (Settings > Secrets and variables > Actions) instead of
+  # committed here — same account ID, just not sitting in version control.
+  AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+  ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
   EKS_CLUSTER: investor-intelligence
 
 jobs:
