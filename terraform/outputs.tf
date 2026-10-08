@@ -17,3 +17,7 @@ output "aurora_cluster_endpoint" {
 output "irsa_role_arn" {
   value = aws_iam_role.app_irsa_role.arn
 }
+
+output "github_actions_role_arn" {
+  value = aws_iam_role.github_actions.arn
+}
