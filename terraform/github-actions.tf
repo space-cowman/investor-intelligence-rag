@@ -18,7 +18,10 @@ resource "aws_iam_role" "github_actions" {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
         }
         StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:space-cowman/investor-intelligence-rag:*"
+          # GitHub's sub claim embeds immutable user/repo IDs (not just names)
+          # to stop a renamed/transferred repo from inheriting trust: confirmed
+          # via CloudTrail as repo:space-cowman@289791280/investor-intelligence-rag@1410160102:...
+          "token.actions.githubusercontent.com:sub" = "repo:space-cowman@289791280/investor-intelligence-rag@1410160102:*"
         }
       }
     }]
