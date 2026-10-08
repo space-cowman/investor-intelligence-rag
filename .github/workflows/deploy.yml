@@ -62,7 +62,10 @@ jobs:
 
       - name: Deploy to EKS
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        # github-actions-rbac.yaml is deliberately excluded: it defines this
+        # pipeline's own permissions, which it correctly cannot read or write
+        # itself. Applied once, manually, by someone with full cluster access.
         run: |
-          kubectl apply -f k8s/
+          kubectl apply -f k8s/configmap.yaml -f k8s/deployment.yaml -f k8s/service.yaml -f k8s/serviceaccount.yaml
           kubectl set image deployment/investor-intelligence app=${{ env.ECR_REPOSITORY }}:${{ github.sha }}
           kubectl rollout status deployment/investor-intelligence --timeout=180s
